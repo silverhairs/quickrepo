@@ -8,7 +8,8 @@ setup(
     description='A CLI app to create a new git repository both locally and remotely',
     install_requires=[
         'Click',
-        'PyGithub'
+        'PyGithub',
+        'gitpython',
     ],
     entry_points='''
     [console_scripts]
