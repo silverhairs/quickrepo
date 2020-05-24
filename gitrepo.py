@@ -1,4 +1,6 @@
 import click
+import os
+import git
 from github import Github
 from github.GithubException import BadCredentialsException
 
@@ -25,17 +27,25 @@ def start():
             auto_init=True,
         )
 
-        repo_url = user.get_user().get_repo(name).clone_url  # Getting url of created repo
-        click.echo(f'Repository created on github, here is the url: {repo_url}')
+        repo_url = user.get_user().get_repo(name).clone_url
+
+        git.Git(os.path.dirname(os.path.realpath(__file__))).clone(repo_url) # Clone the repo locally
+        click.echo('🔥️🔥️ Repository successfully created!')
 
     except BadCredentialsException:
-        print('Wrong username or password')
+        click.echo('Wrong username or password')
+
 
 #TODO:
 """
-Next time you pull the project, please reinstall the package (pip install --editable .) first.
+PS: Next time you pull the project, please reinstall it before doing anything (pip install --editable .)
 
-TODO: Next Tasks
-- Run git command with python script: git clone especially
+Next Tasks
+- Login to Github ✔️
+- Create repo on github ✔️
+- Clone repo locally ✔️
+- Set a right path where the directory should be
 - Setup login with SSH
+- Write tests
+- Output a program description and version
 """
