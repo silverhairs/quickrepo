@@ -10,6 +10,7 @@ setup(
         'Click',
         'PyGithub',
         'gitpython',
+        'colorama',
     ],
     entry_points='''
     [console_scripts]
