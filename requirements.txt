@@ -1,0 +1,12 @@
+certifi==2020.4.5.1
+chardet==3.0.4
+click==7.1.2
+Deprecated==1.2.10
+-e git+git@github.com:silverhairs/GitRepo.git@28f35067fb9529a6ad192acf9965a620355c1a0a#egg=Git_Repo
+idna==2.9
+PyGithub==1.51
+PyJWT==1.7.1
+requests==2.23.0
+urllib3==1.25.9
+wrapt==1.12.1
+yapf==0.30.0
