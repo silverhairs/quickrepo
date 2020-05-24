@@ -16,7 +16,7 @@ def start():
     elif is_public.lower() == 'n' or is_public.lower() == 'no':
         is_public = False
     else:
-        is_public = True
+        is_public = True  #FIXME: abort the program when user inputs a wrong key
 
     try:
         user.get_user().create_repo(  # Creating a repository on github
@@ -25,8 +25,17 @@ def start():
             auto_init=True,
         )
 
-        repo_url = user.get_user().get_repo(name).clone_url
-        print(f'Repository created on github, here is the url: {repo_url}')
+        repo_url = user.get_user().get_repo(name).clone_url  # Getting url of created repo
+        click.echo(f'Repository created on github, here is the url: {repo_url}')
 
     except BadCredentialsException:
         print('Wrong username or password')
+
+#TODO:
+"""
+Next time you pull the project, please reinstall the package (pip install --editable .) first.
+
+TODO: Next Tasks
+- Run git command with python script: git clone especially
+- Setup login with SSH
+"""
