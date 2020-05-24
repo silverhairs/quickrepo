@@ -1,3 +1,7 @@
+Dummy github account credentials:
+Username: pkgTesting
+Password: gitrepo123
+
 #TODO:
 """
 PS: Next time you pull the project, please reinstall it before doing anything (pip install --editable .)
