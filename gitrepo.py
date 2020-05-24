@@ -1,15 +1,14 @@
 import click
 import os
 import git
-from github import Github
-from github.GithubException import BadCredentialsException
+from github import Github, GithubException
 
 
 @click.command()
 def start():
     username = click.prompt('Username')
     password = click.prompt('Password', hide_input=True)
-    user = Github(username, password)
+    connection = Github(username, password)
     name = click.prompt('Repo name: ')
     is_public = click.prompt('Should the repository be public? (y/N)\n')
 
@@ -18,34 +17,28 @@ def start():
     elif is_public.lower() == 'n' or is_public.lower() == 'no':
         is_public = False
     else:
-        is_public = True  #FIXME: abort the program when user inputs a wrong key
+        is_public = True  #FIXME: abort the program when user enters a wrong key
 
     try:
-        user.get_user().create_repo(  # Creating a repository on github
+        connection.get_user().create_repo(  # Creating a repo on github
             name=name,
             private=not is_public,
             auto_init=True,
         )
 
-        repo_url = user.get_user().get_repo(name).clone_url
+        repo_url = connection.get_user().get_repo(
+            name).clone_url  # Getting URL of the created repo
 
-        git.Git(os.path.dirname(os.path.realpath(__file__))).clone(repo_url) # Clone the repo locally
-        click.echo('🔥️🔥️ Repository successfully created!')
+        git.Git(os.path.dirname(os.path.realpath(__file__))).clone(
+            repo_url)  # Clone the repo locally
+        click.echo(
+            click.style('Repository successfully created! 🔥️🔥️', fg='green'))
 
-    except BadCredentialsException:
-        click.echo('Wrong username or password')
+    except GithubException as error:
+        click.echo(
+            click.style(str(error.data['errors'][0]['message']).capitalize(),
+                        fg='red'))
 
-
-#TODO:
-"""
-PS: Next time you pull the project, please reinstall it before doing anything (pip install --editable .)
-
-Next Tasks
-- Login to Github ✔️
-- Create repo on github ✔️
-- Clone repo locally ✔️
-- Set a right path where the directory should be
-- Setup login with SSH
-- Write tests
-- Output a program description and version
-"""
+    except GithubException.BadCredentialsException as error:
+        click.echo(
+            click.style(str(error['message']).capitalize() + ' ❌❌', fg='red'))
