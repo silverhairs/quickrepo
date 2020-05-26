@@ -14,6 +14,6 @@ setup(
     ],
     entry_points='''
     [console_scripts]
-    gitrepo=gitrepo:start
+    gitrepo=gitrepo:main
     '''
 )
