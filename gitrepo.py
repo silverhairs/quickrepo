@@ -1,30 +1,20 @@
 import click
 import os
 import sys
+import subprocess
 import git
 from github import Github
 
 
-# Generates a txt file that holds the username
-def generate_username_file(file_name, username):
-    # Hide file in (Unix systems)
-    prefix = '.' if os.name != 'nt' else ''
-    file_name = f'{prefix}{file_name}'
-
-    with open(file_name, 'w') as f:  
-        f.write(username)
-        f.close()
-
-
-# Create repository on github.com and clone it locally
-def create_and_clone_repo(user, repo_name, public, desc):
+# Create repository on github and clone it locally
+def create_and_clone_repo(user, repo_name, private, desc):
     try:
         click.echo(f'Creating repository {repo_name} ...')
 
         user.create_repo(  
             name=repo_name,
             description=desc,
-            private=not public,
+            private=not private,
             auto_init=True,
         )
         repo_url = user.get_repo(repo_name).clone_url
@@ -35,44 +25,72 @@ def create_and_clone_repo(user, repo_name, public, desc):
         click.secho(f'{repr(e)}', fg='red')
 
 
-@click.command()
-def main():
-    connection = None
+# Initialize a repo from current directory and push it on github
+def repo_from_cwd(cwd, cwd_tree, user):
+    is_private = click.prompt('Should the repository be private?\n[y/N]: ')
+    private = True if is_private.lower() == 'y' else False
+    desc = click.prompt('Description: ', default='')
 
-    # If the username file exists, use it, else requests credentials and generate the file
-    if os.path.exists('.username_holder.txt'):
-        password = click.prompt('Enter GitHub password: ', hide_input=True)
-        with open('.username_holder.txt') as f:
-            for line in f:
-                username = line
-            connection = Github(username, password)
-            f.close()
-    else:
-        username = click.prompt('Username')
-        password = click.prompt('Password', hide_input=True)
-        connection = Github(username, password)
     try:
-        user = connection.get_user() #FIXME: request not being made
-        click.secho('User authenticated', fg='green')
+        user.create_repo(name=cwd, description=desc, private=private)
+        url = user.get_repo(cwd).clone_url
+    except Exception as e:
+        print(f'{repr(e)}')
+        sys.exit()
+
+    repo = git.Repo.init(path=cwd_tree)
+    git.Remote.add(repo, name='origin', url=url)
+
+    # If repo doesn't have a .gitignore request one (not mandatory)
+    if not os.path.exists('.gitignore'):
+        gitignore_status = click.prompt('No .gitignore file detected, add anyway ? [y/N]: ')
+        if gitignore_status.lower() == 'y':
+            subprocess.run(['git', 'add', '.'])
+            commit_msg = click.prompt('Commit message: ', default='Initial commit')
+            subprocess.run(['git', 'commit', '-m', commit_msg])
+            try:
+                subprocess.run(['git', 'push', 'origin', 'master'])
+            except Exception as e:
+                print(f'{repr(e)}')
+                sys.exit()
+        else:
+            sys.exit()
+
+    click.sech('Pushed successfully', fg='green')
+    
+
+# Main function
+@click.command()
+@click.argument('here', required=False)
+def main(here):
+    username = click.prompt('Username')
+    password = click.prompt('Password', hide_input=True)
+    connection = Github(username, password)
+    try:
+        user = connection.get_user()
     except Exception as e:
         click.secho(f'{repr(e)}', fg='red')
         sys.exit()
 
-    generate_username_file('username_holder.txt', username)
+    click.secho('User authenticated', fg='blue')
 
-    repo_name = click.prompt('Repo name: ')
-    public = click.prompt('Should the repository be public?\n[y/N]: ')
-    count = 1
-    while count > 0:
-        if public.lower() == 'y' or public.lower() == 'yes':
-            public = True
-            count -=1
-        elif public.lower() == 'n' or public.lower() == 'no':
-            public = False
-            count-=1
-        else:
-            click.echo('Invalid input!')
-            public = click.prompt('Should the repository be public?\n[y/N]: ')
-    desc = click.prompt('Description: ', default='')
-
-    create_and_clone_repo(user=user, repo_name=repo_name, public=public, desc=desc)
+    CURRENT_DIR_NAME = os.path.basename(os.getcwd())
+    # If user added argument "here" then init local and github repo from current directory
+    # Otherwise, generate a new repository on github and clone it at the current directory
+    if here:
+        repo_from_cwd(cwd=CURRENT_DIR_NAME, cwd_tree=os.getcwd, user=connection.get_user())
+    else:
+        repo_name = click.prompt('Repo name: ')
+        private = click.prompt('Should the repository be private?\n[y/N]: ')
+        count = 1
+        while count > 0:
+            if private.lower() == 'y' or private.lower() == 'yes':
+                private = True
+                count -=1
+            elif private.lower() == 'n' or private.lower() == 'no':
+                private = False
+                count-=1
+            else:
+                click.echo('Invalid input!')
+                private = click.prompt('Should the repository be private?\n[y/N]: ')
+        desc = click.prompt('Description: ', default='')
