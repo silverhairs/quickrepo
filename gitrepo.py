@@ -50,6 +50,7 @@ def init_cwd(cwd, cwd_path, user, private, desc):
 
     repo = git.Repo.init(path=cwd_path)
     remote = repo.create_remote(name='origin', url=url)
+    remote.fetch()
     # Add and commit files to local repo
     files = [f for f in os.listdir('.') if os.path.isfile(f)]
     for file in files:
@@ -57,7 +58,7 @@ def init_cwd(cwd, cwd_path, user, private, desc):
     commit_msg = click.prompt('Commit message ', default='Initial commit')
     repo.index.commit(message=commit_msg)
     try:
-        remote.push(refspec='master:master', )
+        remote.push(refspec='master:master') #FIXME: We shouldn't receive another request of credentials
         click.secho(f'Initiazed repo {cwd} locally and on github.com', fg='green')
     except Exception as e:
         click.secho(f'{repr(e)}', fg='red')
