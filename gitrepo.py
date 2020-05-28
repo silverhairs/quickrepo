@@ -40,7 +40,6 @@ def repo_from_cwd(cwd, cwd_tree, user):
 
     repo = git.Repo.init(path=cwd_tree)
     git.Remote.add(repo, name='origin', url=url)
-
     # If repo doesn't have a .gitignore request one (not mandatory)
     if not os.path.exists('.gitignore'):
         gitignore_status = click.prompt('No .gitignore file detected, add anyway ? [y/N]: ')
@@ -55,8 +54,7 @@ def repo_from_cwd(cwd, cwd_tree, user):
                 sys.exit()
         else:
             sys.exit()
-
-    click.sech('Pushed successfully', fg='green')
+    click.secho(f'Initiazed repo {cwd} locally and on github.com', fg='green')
     
 
 # Main function
@@ -73,10 +71,9 @@ def main(here):
         sys.exit()
 
     click.secho('User authenticated', fg='blue')
-
     CURRENT_DIR_NAME = os.path.basename(os.getcwd())
-    # If user added argument "here" then init local and github repo from current directory
-    # Otherwise, generate a new repository on github and clone it at the current directory
+    '''If user adds argument "here" then init local and github repo from current directory
+     Otherwise, generate a new repository on github and clone it at the current directory'''
     if here:
         repo_from_cwd(cwd=CURRENT_DIR_NAME, cwd_tree=os.getcwd, user=connection.get_user())
     else:
@@ -93,4 +90,7 @@ def main(here):
             else:
                 click.echo('Invalid input!')
                 private = click.prompt('Should the repository be private?\n[y/N]: ')
+
         desc = click.prompt('Description: ', default='')
+        create_and_clone_repo(user=connection.get_user(), repo_name=repo_name, private=private, desc=desc)
+
