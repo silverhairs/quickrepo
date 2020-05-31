@@ -11,7 +11,7 @@ def create_and_clone_repo(user, repo_name, private, desc):
     try:
         click.echo(f'Creating repository {repo_name} ...')
 
-        user.create_repo(  
+        user.create_repo(
             name=repo_name,
             description=desc,
             private=not private,
@@ -42,10 +42,12 @@ def repo_from_cwd(cwd, cwd_tree, user):
     git.Remote.add(repo, name='origin', url=url)
     # If repo doesn't have a .gitignore request one (not mandatory)
     if not os.path.exists('.gitignore'):
-        gitignore_status = click.prompt('No .gitignore file detected, add anyway ? [y/N]: ')
+        gitignore_status = click.prompt(
+            'No .gitignore file detected, add anyway ? [y/N]: ')
         if gitignore_status.lower() == 'y':
             subprocess.run(['git', 'add', '.'])
-            commit_msg = click.prompt('Commit message: ', default='Initial commit')
+            commit_msg = click.prompt(
+                'Commit message: ', default='Initial commit')
             subprocess.run(['git', 'commit', '-m', commit_msg])
             try:
                 subprocess.run(['git', 'push', 'origin', 'master'])
@@ -55,7 +57,7 @@ def repo_from_cwd(cwd, cwd_tree, user):
         else:
             sys.exit()
     click.secho(f'Initiazed repo {cwd} locally and on github.com', fg='green')
-    
+
 
 # Main function
 @click.command()
@@ -75,7 +77,8 @@ def main(here):
     '''If user adds argument "here" then init local and github repo from current directory
      Otherwise, generate a new repository on github and clone it at the current directory'''
     if here:
-        repo_from_cwd(cwd=CURRENT_DIR_NAME, cwd_tree=os.getcwd, user=connection.get_user())
+        repo_from_cwd(cwd=CURRENT_DIR_NAME, cwd_tree=os.getcwd,
+                      user=connection.get_user())
     else:
         repo_name = click.prompt('Repo name: ')
         private = click.prompt('Should the repository be private?\n[y/N]: ')
@@ -83,14 +86,15 @@ def main(here):
         while count > 0:
             if private.lower() == 'y' or private.lower() == 'yes':
                 private = True
-                count -=1
+                count -= 1
             elif private.lower() == 'n' or private.lower() == 'no':
                 private = False
-                count-=1
+                count -= 1
             else:
                 click.echo('Invalid input!')
-                private = click.prompt('Should the repository be private?\n[y/N]: ')
+                private = click.prompt(
+                    'Should the repository be private?\n[y/N]: ')
 
         desc = click.prompt('Description: ', default='')
-        create_and_clone_repo(user=connection.get_user(), repo_name=repo_name, private=private, desc=desc)
-
+        create_and_clone_repo(user=connection.get_user(),
+                              repo_name=repo_name, private=private, desc=desc)
