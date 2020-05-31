@@ -1,19 +1,35 @@
 from setuptools import setup
+import os
 
-version='1.0'
+version = '1.0'
+current = os.path.abspath(os.path.dirname(__file__))
+# Getting long description
+with open(os.path.join(current, 'README.md'), 'r') as f:
+    readme = f.read()
+
 setup(
-    name='Git-Repo',
+    name='GitRepo',
     version=version,
     author='Boris Kayi & Herve Musangwa',
-    description='A CLI app to create a new git repository both locally and remotely',
+    author_email='boriskayienzo@gmail.com',
+    description=
+    'Command-line tool to automate git and github repository creation.',
+    long_description=readme,
+    long_description_content_type='text/markdown',
+    python_requires='>=3.6',
     install_requires=[
         'Click',
         'PyGithub',
         'gitpython',
         'colorama',
     ],
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
     entry_points='''
     [console_scripts]
     gitrepo=gitrepo:main
-    '''
+    ''',
 )

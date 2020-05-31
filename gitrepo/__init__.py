@@ -1,5 +1,4 @@
 #!/usr/bin/env  python3
-
 import click
 import os
 import sys
@@ -47,12 +46,11 @@ def init_cwd(cwd, cwd_path, user, private, desc):
         user.create_repo(name=cwd, description=desc, private=private)
         url = user.get_repo(cwd).clone_url
     except Exception as e:
-        print(f'{repr(e)}')
+        click.secho(f'{repr(e)}', fg='red')
         sys.exit('Aborted!')
 
     repo = git.Repo.init(path=cwd_path)
     remote = repo.create_remote(name='origin', url=url)
-    remote.fetch()
     # Add and commit files to local repo
     files = [f for f in os.listdir('.') if os.path.isfile(f)]
     for file in files:
