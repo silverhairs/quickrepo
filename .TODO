@@ -10,13 +10,8 @@ Next Tasks
 - Login to Github ✔️
 - Create repo on github ✔️
 - Clone repo locally ✔️
-
-- Setup login with SSH  #FIXME: Seems like this one is not permitted by the github api so I thought of something:
-                        why not use a token, like at the first sign in, it will require username and password
-                        then it will generate a hidden root .txt file with a token, then everytime the user wanna initialize
-                        a new repo, the script will look for the root file and auto-fill the credentials.
-                        Tell me what you think. (of course the token will be encrypted) 🔨️ (security gaps, pratically done tho)
-- Set a right path where the directory should be
+- Set a right path where the directory should be ✔️
+- Setup login with SSH  (Impossible)
 - Write tests
 - Output a program description and version
 """
