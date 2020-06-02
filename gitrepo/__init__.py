@@ -14,7 +14,7 @@ def init_new_dir(user, repo_name, private, desc):
         user.create_repo(  
             name=repo_name,
             description=desc,
-            private=not private,
+            private=private,
             auto_init=True,
         )
         # Clone repo in current directory
@@ -25,28 +25,28 @@ def init_new_dir(user, repo_name, private, desc):
         click.secho(f'{repr(e)}', fg='red')
 
 
-# Initialize a git and github repo in the current directory
+# Initialize a git and github repo in the current directory (cwd=current working directory)
 def init_cwd(cwd, cwd_path, user, private, desc):
-    # If repo doesn't have a .gitignore, remind user to create one (Not mandatory though)
+    # If repo doesn't have a .gitignore, remind the user to create one (Not mandatory)
     if not os.path.exists('.gitignore'):
         click.secho(f'{BOLD_TEXT}No .gitignore detected, continue anyway?')
-        gitignore_status = click.prompt("1- Yeah, Let's continue\n2- OMG! stop everything, I must create it first\n")
+        gitignore_status = click.prompt("1- Yeah, Let's continue\n2- No, stop everything, I must create it first\n")
         count = 1
         while count > 0:
             if gitignore_status == '2':
                 count-=1
-                sys.exit('Aborted')
+                sys.exit('Aborted!')
             elif gitignore_status == '1':
                 count-=1
             else:
-                click.echo(f'{BOLD_TEXT}Oops... wrong input!')
-                gitignore_status = click.prompt("1- Yeah, I don't care\n2- OMG! stop everything, I must create it first\n")
+                click.echo(f'{BOLD_TEXT}Invalid input!')
+                gitignore_status = click.prompt("1- Yes, it's no big deal\n2- No, I must create it first\n")
     try:
-        click.secho(f'{BOLD_TEXT}Getting url...', fg='cyan')
+        click.secho(f'{BOLD_TEXT}Creating...', fg='blue')
         user.create_repo(name=cwd, description=desc, private=private)
         url = user.get_repo(cwd).clone_url
     except Exception as e:
-        click.secho(f'{repr(e)}', fg='red')
+        click.secho(f'{BOLD_TEXT}{repr(e)}', fg='red')
         sys.exit('Aborted!')
 
     repo = git.Repo.init(path=cwd_path)
@@ -58,7 +58,7 @@ def init_cwd(cwd, cwd_path, user, private, desc):
     commit_msg = click.prompt('Commit message ', default='Initial commit')
     repo.index.commit(message=commit_msg)
     try:
-        remote.push(refspec='master:master') #FIXME: We shouldn't receive another request of credentials
+        remote.push(refspec='master:master')
         click.secho(f'Initiazed repo {cwd} locally and on github.com', fg='green')
     except Exception as e:
         click.secho(f'{repr(e)}', fg='red')
@@ -100,9 +100,8 @@ def main(here):
     desc = click.prompt('Description ', default='')
 
     current_dir = os.path.basename(os.getcwd())
-
-    '''If user adds argument "here" then init local and github repo from current directory
-     Otherwise, generate a new repository on github and clone it at the current directory'''
+    # If user enters argument "here" then init local and github repo from current directory
+    # Otherwise, generate a new repository on github and clone it at the current directory
     if here:
         init_cwd(cwd=current_dir.replace(' ', ''), cwd_path=os.getcwd(), user=connection.get_user(), private=private, desc=desc)
     else:
