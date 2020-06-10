@@ -5,7 +5,7 @@ It is quite boring everytime typing `git init` in your local computer then go to
 <img src="/demo.gif" alt="demo">
 
 ## Requirements
-- Python 3.4^
+- Python 3.6^
 ## Installation
 ```
 $ git clone https://github.com/silverhairs/gitrepo.git
