@@ -22,18 +22,17 @@ def new():
     """
     credentials = set_credentials()
     repo_name = click.prompt("Repository name: ")
-    user = Github(credentials["username"], credentials["pw"]).get_user()
-
+    
     try:
         click.secho(f"{BOLD_TEXT}Creating repository {repo_name} ...", fg="blue")
-        user.create_repo(
+        credentials['user'].create_repo(
             name=repo_name,
             description=credentials["desc"],
             private=credentials["is_private"],
             auto_init=True,
         )
         # Clone repo in current directory
-        url = user.get_repo(repo_name).clone_url
+        url = credentials['user'].get_repo(repo_name).clone_url
         git.Git(os.getcwd()).clone(url)
         click.secho(f"{BOLD_TEXT}Repository successfully created! 🔥️🔥️", fg="green")
     except Exception as e:
@@ -47,7 +46,6 @@ def here():
     Initialize the current directory as a git and github repository
     """
     credentials = set_credentials()
-    user = Github(credentials["username"], credentials["pw"]).get_user()
     cwd = os.getcwd()  # current working directory
     cwf = os.path.basename(cwd)  # current working folder
 
@@ -71,10 +69,10 @@ def here():
                 )
     try:
         click.secho(f"{BOLD_TEXT}Initializing repository...", fg="blue")
-        user.create_repo(
+        credentials['user'].create_repo(
             name=cwf, description=credentials["desc"], private=credentials["is_private"]
         )
-        url = user.get_repo(cwf).clone_url
+        url = credentials['user'].get_repo(cwf).clone_url
     except Exception as e:
         click.secho(f"{BOLD_TEXT}{repr(e)}", fg="red")
         sys.exit("Aborted!")
@@ -87,19 +85,21 @@ def here():
         repo.index.add([f"{cwd}/{f}"])
     commit_msg = click.prompt("Commit message ", default="Initial commit")
     repo.index.commit(message=commit_msg)
+    # Push to github.com in master branch
     try:
         remote.push(refspec="master:master")
-        click.secho(f"Initiazed repo {cwf} locally and on github.com 🔥️🔥️", fg="blue")
+        click.secho(f"{BOLD_TEXT}Initiazed {cwf} locally and on github.com 🔥️🔥️", fg="green")
     except Exception as e:
         click.secho(f"{repr(e)}", fg="red")
         sys.exit("Aborted!")
 
 
-# Request credentials
+# Entering the credentials
 def set_credentials():
 
     username = click.prompt("Username for github.com")
-    password = click.prompt("Password for github.com", hide_input=True)
+    pw = click.prompt("Password for github.com", hide_input=True)
+    user = Github(username, pw).get_user()
 
     private = click.prompt("Should the repository be private? [y/N] ")
     count = 1
@@ -116,8 +116,7 @@ def set_credentials():
     desc = click.prompt("Description ", default="")
 
     return {
-        "username": username,
-        "pw": password,
+        "user": user,
         "is_private": private,
         "desc": desc,
     }
