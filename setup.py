@@ -1,7 +1,7 @@
 from setuptools import setup
 import os
 
-version = '1.0'
+version = '0.0.2'
 current = os.path.abspath(os.path.dirname(__file__))
 # Getting long description
 with open(os.path.join(current, 'README.md'), 'r') as f:
