@@ -5,114 +5,118 @@ import sys
 import git
 from github import Github
 
-BOLD_TEXT = '\033[1m'
+BOLD_TEXT = "\033[1m"
 
+@click.group()
+@click.version_option(version="0.0.5")
+def main():
+    """
+    A CLI tool to initialize a repository both locally and on GitHub
+    """
 
-# Initialize git and github repo in new directory and generate it
-
-def init_new_dir(user, repo_name, private, desc):
+# generate new repository folder
+@main.command()
+def new():
+    """
+    Generate a new Github repository folder in the current location
+    """
+    credentials = set_credentials()
+    repo_name = click.prompt("Repository name: ")
+    
     try:
-        click.secho(
-            f'{BOLD_TEXT}Creating repository {repo_name} ...', fg='blue')
-        user.create_repo(
+        click.secho(f"{BOLD_TEXT}Creating repository {repo_name} ...", fg="blue")
+        credentials['user'].create_repo(
             name=repo_name,
-            description=desc,
-            private=private,
+            description=credentials["desc"],
+            private=credentials["is_private"],
             auto_init=True,
         )
         # Clone repo in current directory
-        repo_url = user.get_repo(repo_name).clone_url
-        git.Git(os.getcwd()).clone(repo_url)
-        click.secho(
-            f'{BOLD_TEXT}Repository successfully created! 🔥️🔥️', fg='green')
+        url = credentials['user'].get_repo(repo_name).clone_url
+        git.Git(os.getcwd()).clone(url)
+        click.secho(f"{BOLD_TEXT}Repository successfully created! 🔥️🔥️", fg="green")
     except Exception as e:
-        click.secho(f'{repr(e)}', fg='red')
+        click.secho(f"{repr(e)}", fg="red")
 
 
-# Initialize a git and github repo in the current directory (cwd=current working directory)
-def init_cwd(cwd, cwd_path, user, private, desc):
-    # If repo doesn't have a .gitignore, remind the user to create one (Not mandatory)
-    if not os.path.exists('.gitignore'):
-        click.secho(f'{BOLD_TEXT}No .gitignore detected, continue anyway?')
+# Initialize git and github on current folder
+@main.command()
+def here():
+    """
+    Initialize the current directory as a git and github repository
+    """
+    credentials = set_credentials()
+    cwd = os.getcwd()  # current working directory
+    cwf = os.path.basename(cwd)  # current working folder
+
+    # Check if there is a .gitignore file
+    if not os.path.exists(".gitignore"):
+        click.secho(f"{BOLD_TEXT}No .gitignore detected, continue anyway?")
         gitignore_status = click.prompt(
-            "1- Yeah, Let's continue\n2- No, stop everything, I must create it first\n")
+            "1- Yeah, Let's continue\n2- No, stop everything, I must create it first\n"
+        )
         count = 1
         while count > 0:
-            if gitignore_status == '2':
+            if gitignore_status == "2":
                 count -= 1
-                sys.exit('Aborted!')
-            elif gitignore_status == '1':
+                sys.exit("Aborted!")
+            elif gitignore_status == "1":
                 count -= 1
             else:
-                click.echo(f'{BOLD_TEXT}Invalid input!')
+                click.echo(f"{BOLD_TEXT}Invalid input!")
                 gitignore_status = click.prompt(
-                    "1- Yes, it's no big deal\n2- No, I must create it first\n")
+                    "1- Yes, it's no big deal\n2- No, I must create it first\n"
+                )
     try:
-        click.secho(f'{BOLD_TEXT}Creating...', fg='blue')
-        user.create_repo(name=cwd, description=desc, private=private)
-        url = user.get_repo(cwd).clone_url
+        click.secho(f"{BOLD_TEXT}Initializing repository...", fg="blue")
+        credentials['user'].create_repo(
+            name=cwf, description=credentials["desc"], private=credentials["is_private"]
+        )
+        url = credentials['user'].get_repo(cwf).clone_url
     except Exception as e:
-        click.secho(f'{BOLD_TEXT}{repr(e)}', fg='red')
-        sys.exit('Aborted!')
+        click.secho(f"{BOLD_TEXT}{repr(e)}", fg="red")
+        sys.exit("Aborted!")
 
-    repo = git.Repo.init(path=cwd_path)
-    remote = repo.create_remote(name='origin', url=url)
-    # Add and commit files to local repo
-    files = [f for f in os.listdir('.') if os.path.isfile(f)]
-    for file in files:
-        repo.index.add([f'{cwd_path}/{file}'])
-    commit_msg = click.prompt('Commit message ', default='Initial commit')
+    repo = git.Repo.init(path=cwd)
+    remote = repo.create_remote(name="origin", url=url)
+    # Add and commit files
+    files = [f for f in os.listdir(".") if os.path.isfile(f)]
+    for f in files:
+        repo.index.add([f"{cwd}/{f}"])
+    commit_msg = click.prompt("Commit message ", default="Initial commit")
     repo.index.commit(message=commit_msg)
+    # Push to github.com in master branch
     try:
-        remote.push(refspec='master:master')
-        click.secho(
-            f'Initiazed repo {cwd} locally and on github.com', fg='green')
+        remote.push(refspec="master:master")
+        click.secho(f"{BOLD_TEXT}Initiazed {cwf} locally and on github.com 🔥️🔥️", fg="green")
     except Exception as e:
-        click.secho(f'{repr(e)}', fg='red')
-        sys.exit('Aborted!')
+        click.secho(f"{repr(e)}", fg="red")
+        sys.exit("Aborted!")
 
 
-# Main function
-@click.command()
-@click.argument('here', required=False)
-def main(here):
-    '''
-    Initialize a repository in both GitHub and your local computer with a single command.
-    '''
-    if here:
-        if here != 'here':
-            sys.exit(f'{BOLD_TEXT}Unknown argument {here}')
+# Entering the credentials
+def set_credentials():
 
-    username = click.prompt('Username for github.com')
-    password = click.prompt('Password for github.com', hide_input=True)
-    connection = Github(username, password)
-    try:
-        user = connection.get_user()
-    except Exception as e:
-        click.secho(f'{repr(e)}', fg='red')
-        sys.exit('Aborted!')
+    username = click.prompt("Username for github.com")
+    pw = click.prompt("Password for github.com", hide_input=True)
+    user = Github(username, pw).get_user()
 
-    private = click.prompt('Should the repository be private? [y/N] ')
+    private = click.prompt("Should the repository be private? [y/N] ")
     count = 1
     while count > 0:
-        if private.lower() == 'y' or private.lower() == 'yes':
+        if private.lower() == "y" or private.lower() == "yes":
             private = True
             count -= 1
-        elif private.lower() == 'n' or private.lower() == 'no':
+        elif private.lower() == "n" or private.lower() == "no":
             private = False
             count -= 1
         else:
-            click.echo(f'{BOLD_TEXT}Invalid input!')
-            private = click.prompt('Should the repository be private? [y/N] ')
-    desc = click.prompt('Description ', default='')
+            click.echo(f"{BOLD_TEXT}Invalid input!")
+            private = click.prompt("Should the repository be private? [y/N] ")
+    desc = click.prompt("Description ", default="")
 
-    current_dir = os.path.basename(os.getcwd())
-    # If user enters argument "here" then init local and github repo from current directory
-    # Otherwise, generate a new repository on github and clone it at the current directory
-    if here:
-        init_cwd(cwd=current_dir.replace(' ', ''), cwd_path=os.getcwd(),
-                 user=connection.get_user(), private=private, desc=desc)
-    else:
-        repo_name = click.prompt('Repo name: ')
-        init_new_dir(user=connection.get_user(),
-                     repo_name=repo_name, private=private, desc=desc)
+    return {
+        "user": user,
+        "is_private": private,
+        "desc": desc,
+    }
