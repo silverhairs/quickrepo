@@ -30,6 +30,6 @@ setup(
     ],
     entry_points='''
     [console_scripts]
-    gitrepo=gitrepo:main
+    quickrepo=quickrepo:main
     ''',
 )
