@@ -8,7 +8,7 @@ with open(os.path.join(current, 'README.md'), 'r') as f:
     readme = f.read()
 
 setup(
-    name='GitRepo',
+    name='quickrepo',
     version=version,
     author='Boris Kayi & Herve Musangwa',
     author_email='boriskayienzo@gmail.com',
