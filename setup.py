@@ -10,7 +10,7 @@ with open(os.path.join(current, 'README.md'), 'r') as f:
 setup(
     name='quickrepo',
     version=version,
-    author='Boris Kayi & Herve Musangwa',
+    author='Boris Kayi',
     author_email='boriskayienzo@gmail.com',
     description=
     'Command-line tool to automate git and github repository creation.',
