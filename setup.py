@@ -1,7 +1,7 @@
 from setuptools import setup
 import os
 
-version = '0.0.5'
+version = '0.0.6'
 current = os.path.abspath(os.path.dirname(__file__))
 # Getting long description
 with open(os.path.join(current, 'README.md'), 'r') as f:
@@ -10,7 +10,7 @@ with open(os.path.join(current, 'README.md'), 'r') as f:
 setup(
     name='quickrepo',
     version=version,
-    author='Boris Kayi',
+    author='Boris Kayi & Herve Musangwa',
     author_email='boriskayienzo@gmail.com',
     description=
     'Command-line tool to automate git and github repository creation.',
