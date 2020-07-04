@@ -8,7 +8,7 @@ from github import Github
 BOLD_TEXT = "\033[1m"
 
 @click.group()
-@click.version_option(version="0.0.8")
+@click.version_option(version="1.0.1")
 def cli():
     """
     A CLI tool to initialize a repository both locally and on GitHub
