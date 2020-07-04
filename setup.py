@@ -1,7 +1,7 @@
 from setuptools import setup
 import os
 
-version = '0.0.7'
+version = '0.0.8'
 current = os.path.abspath(os.path.dirname(__file__))
 # Getting long description
 with open(os.path.join(current, 'README.md'), 'r') as f:
@@ -10,7 +10,7 @@ with open(os.path.join(current, 'README.md'), 'r') as f:
 setup(
     name='quickrepo',
     version=version,
-    url='github.com/silverhairs/quickrepo',
+    url='https://www.github.com/silverhairs/quickrepo',
     author='Boris Kayi',
     author_email='boriskayienzo@gmail.com',
     description=
