@@ -8,19 +8,19 @@ from github import Github
 BOLD_TEXT = "\033[1m"
 
 @click.group()
-@click.version_option(version="0.0.6")
-def main():
+@click.version_option(version="0.0.7")
+def cli():
     """
     A CLI tool to initialize a repository both locally and on GitHub
     """
 
 # generate new repository folder
-@main.command()
+@cli.command()
 def new():
     """
     Generate a new Github repository folder in the current location
     """
-    credentials = set_credentials()
+    credentials = input_credentials()
     repo_name = click.prompt("Repository name: ")
     
     try:
@@ -40,12 +40,12 @@ def new():
 
 
 # Initialize git and github on current folder
-@main.command()
+@cli.command()
 def here():
     """
     Initialize the current directory as a git and github repository
     """
-    credentials = set_credentials()
+    credentials = input_credentials()
     cwd = os.getcwd()  # current working directory
     cwf = os.path.basename(cwd)  # current working folder
 
@@ -94,8 +94,8 @@ def here():
         sys.exit("Aborted!")
 
 
-# Entering the credentials
-def set_credentials():
+# User enters his credentials
+def input_credentials():
 
     username = click.prompt("Username for github.com")
     pw = click.prompt("Password for github.com", hide_input=True)
