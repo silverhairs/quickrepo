@@ -13,14 +13,15 @@ It is quite boring everytime typing `git init` in your local computer then go to
 ## Installation
 <b>install the official package from PyPI</b>
 ```
-pip3 install quickrepo
+pip install quickrepo
 ```
+If you have multiple versions of Python installed in your system, use `pip3 install quickrepo` instead.
 
 <b>or install editable source code</b>
 ```
 git clone github.com/silverhairs/quickrepo.git
 cd quickrepo
-pip3 install --editable .
+pip install --editable .
 ```
 
 ## Usage
