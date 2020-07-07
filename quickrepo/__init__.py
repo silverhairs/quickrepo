@@ -1,7 +1,6 @@
 #!/usr/bin/env  python3
 import click
 import os
-import sys
 import git
 from github import Github
 
@@ -27,7 +26,7 @@ def new(username, password, name):
     Generate a new Github repository folder in the current location
     """
     user = Github(username, password).get_user()
-    
+
     private = click.confirm("Should the repository be private?")
     desc = click.prompt("Description ", default="")
 
@@ -74,27 +73,22 @@ def here(username, password):
         )
         url = user.get_repo(cwd_name).clone_url
 
-    except Exception as e:
-        click.secho(f"{BOLD_TEXT}{repr(e)}", bg="red")
-        sys.exit("Aborted!")
+        repo = git.Repo.init(path=cwd)
+        remote = repo.create_remote(name="origin", url=url)
 
-    repo = git.Repo.init(path=cwd)
-    remote = repo.create_remote(name="origin", url=url)
+        # Add and commit files
+        files = [f for f in os.listdir(".") if os.path.isfile(f)]
+        for f in files:
+            repo.index.add([f"{cwd}/{f}"])
+        commit_msg = click.prompt("Commit message ", default="Initial commit")
+        repo.index.commit(message=commit_msg)
 
-    # Add and commit files
-    files = [f for f in os.listdir(".") if os.path.isfile(f)]
-    for f in files:
-        repo.index.add([f"{cwd}/{f}"])
-    commit_msg = click.prompt("Commit message ", default="Initial commit")
-    repo.index.commit(message=commit_msg)
-
-    # Push to github.com in master branch
-    try:
+        # push changes to github server
         remote.push(refspec="master:master")
         click.secho(
             f"{BOLD_TEXT}Respo {cwd_name} successfully created locally! 🔥️🔥️",
             fg="green",
         )
+
     except Exception as e:
-        click.secho(f"{repr(e)}", fg="red")
-        sys.exit("Aborted!")
+        click.secho(f"{BOLD_TEXT}{repr(e)}", bg="red")
