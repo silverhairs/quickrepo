@@ -31,6 +31,6 @@ def test_command_here(runner):
         quickrepo.here, ["-u", "not-john", "-p", "not-my-password"], input="y"
     )
 
-    assert "no gitignore" in result.output
+    assert "be private" in result.output
     assert result.exit_code == 0
 
