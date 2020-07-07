@@ -1,6 +1,6 @@
 #!/usr/bin/env  python3
 import click
-import os
+from os import getcwd, listdir, path
 import git
 from github import Github
 
@@ -37,7 +37,7 @@ def new(username, password, name):
         )
         # Clone repo in current directory
         url = user.get_repo(name).clone_url
-        git.Git(os.getcwd()).clone(url)
+        git.Git(getcwd()).clone(url)
         click.secho(f"{BOLD_TEXT}Repository successfully created! 🔥️🔥️", fg="green")
     except Exception as e:
         click.secho(f"{repr(e)}", fg="red")
@@ -53,11 +53,11 @@ def here(username, password):
     Initialize the current directory as a git and github repository
     """
     user = Github(username, password).get_user()
-    cwd = os.getcwd()  # current working directory
-    cwd_name = os.path.basename(cwd)  # current folder name
+    cwd = getcwd()  # current working directory
+    cwd_name = path.basename(cwd)  # current folder name
 
     # Check if there is a .gitignore file
-    if not os.path.exists(".gitignore"):
+    if not path.exists(".gitignore"):
         gitignore_status = click.confirm(
             f"{BOLD_TEXT}We detect no gitignore file in your project do you want to continue anyway?",
             abort=True,
@@ -77,7 +77,7 @@ def here(username, password):
         remote = repo.create_remote(name="origin", url=url)
 
         # Add and commit files
-        files = [f for f in os.listdir(".") if os.path.isfile(f)]
+        files = [f for f in listdir(".") if path.isfile(f)]
         for f in files:
             repo.index.add([f"{cwd}/{f}"])
         commit_msg = click.prompt("Commit message ", default="Initial commit")
