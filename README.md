@@ -9,7 +9,7 @@ It is quite boring everytime typing `git init` in your local computer then go to
 <img src="/demo.gif" alt="demo">
 
 ## Requirements
-  - Python 3.6^
+  - Python 3.6+
 ## Installation
 <b>install the official package from PyPI</b>
 ```
@@ -23,7 +23,6 @@ git clone github.com/silverhairs/quickrepo.git
 cd quickrepo
 pip install --editable .
 ```
-
 ## Usage
 Run `quickrepo` to list all the available commands.
 
