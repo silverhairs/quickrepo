@@ -9,7 +9,7 @@ It is quite boring everytime typing `git init` in your local computer then go to
 <img src="/demo.gif" alt="demo">
 
 ## Requirements
-- Python 3.6^
+  - Python 3.6^
 ## Installation
 <b>install the official package from PyPI</b>
 ```
@@ -27,14 +27,13 @@ pip install --editable .
 ## Usage
 Run `quickrepo` to list all the available commands.
 
-#### Initialize a new Git & Github repository
+### Initialize a new Git & Github repository
 To generate a brand new project both locally and on Github, open your terminal/command prompt and run: </br>
 ```
 quickrepo new
 ```
-#### Initialize current working directory as Git & Github repository
+### Initialize current working directory as Git & Github repository
 To initialize a Git repository in the current working directory and push the content on Github, open your terminal/command prompt and run </br>
 ```
 quickrepo here
 ```
-
