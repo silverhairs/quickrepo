@@ -10,9 +10,7 @@ BOLD_TEXT = "\033[1m"
 @click.group()
 @click.version_option(version="1.0.3")
 def main():
-    """
-    A CLI tool to initialize a repository both locally and on GitHub
-    """
+    """A CLI tool to initialize a repository both locally and on GitHub"""
 
 
 @main.command()
@@ -22,9 +20,8 @@ def main():
 )
 @click.option("--name", "-n", prompt=True, help="Enter repository name")
 def new(username, password, name):
-    """
-    Generate a new Github repository folder in the current location
-    """
+    """Generate a new Github repository folder in the current location"""
+    
     user = Github(username, password).get_user()
 
     private = click.confirm("Should the repository be private?")
@@ -49,9 +46,7 @@ def new(username, password, name):
     "--password", "-p", prompt=True, help="Enter your github password", hide_input=True
 )
 def here(username, password):
-    """
-    Initialize the current directory as a git and github repository
-    """
+    """Initialize the current directory as a git and github repository"""
     user = Github(username, password).get_user()
     cwd = getcwd()  # current working directory
     cwd_name = path.basename(cwd)  # current folder name
