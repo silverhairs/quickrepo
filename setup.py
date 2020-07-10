@@ -1,7 +1,6 @@
 from setuptools import setup
 import os
 
-version = "1.0.3"
 current = os.path.abspath(os.path.dirname(__file__))
 # Getting long description
 with open(os.path.join(current, "README.md"), "r") as f:
@@ -9,7 +8,7 @@ with open(os.path.join(current, "README.md"), "r") as f:
 
 setup(
     name="quickrepo",
-    version=version,
+    version="1.0.3",
     url="https://www.github.com/silverhairs/quickrepo",
     author="Boris Kayi",
     author_email="boriskayienzo@gmail.com",
@@ -27,7 +26,11 @@ setup(
         "colorama==0.4.3",
     ],
     classifiers=[
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Intended Audience :: Developers",
+        "Topic :: Software Development :: Build Tools",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
