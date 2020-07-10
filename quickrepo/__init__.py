@@ -86,7 +86,7 @@ def here(username, password):
         with spinner():
             remote.push(refspec="master:master")
         click.secho(
-            f"{BOLD_TEXT}Respo {cwd_name} successfully created locally! 🔥️🔥️",
+            f"{BOLD_TEXT}Repository named {cwd_name} successfully created locally! 🔥️🔥️",
             fg="green",
         )
 
