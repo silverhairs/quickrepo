@@ -1,7 +1,8 @@
 #!/usr/bin/env  python3
 import click
-from os import getcwd, listdir, path
 import git
+from os import getcwd, listdir, path
+from click_spinner import spinner
 from github import Github
 
 BOLD_TEXT = "\033[1m"
@@ -21,7 +22,7 @@ def main():
 @click.option("--name", "-n", prompt=True, help="Enter repository name")
 def new(username, password, name):
     """Generate a new Github repository folder in the current location"""
-    
+
     user = Github(username, password).get_user()
 
     private = click.confirm("Should the repository be private?")
@@ -29,12 +30,13 @@ def new(username, password, name):
 
     try:
         click.secho(f"{BOLD_TEXT}Creating repository {name} ...", fg="blue")
-        user.create_repo(
-            name=name, description=desc, private=private, auto_init=True,
-        )
-        # Clone repo in current directory
-        url = user.get_repo(name).clone_url
-        git.Git(getcwd()).clone(url)
+        with spinner():
+            user.create_repo(
+                name=name, description=desc, private=private, auto_init=True,
+            )
+            # Clone repo in current directory
+            url = user.get_repo(name).clone_url
+            git.Git(getcwd()).clone(url)
         click.secho(f"{BOLD_TEXT}Repository successfully created! 🔥️🔥️", fg="green")
 
     except Exception as e:
@@ -63,14 +65,15 @@ def here(username, password):
     desc = click.prompt("Description ", default="")
 
     try:
-        click.secho(f"{BOLD_TEXT}Creating repository {cwd_name}...", fg="blue")
-        user.create_repo(
-            name=cwd_name, description=desc, private=private,
-        )
-        url = user.get_repo(cwd_name).clone_url
+        with spinner():
+            click.secho(f"{BOLD_TEXT}Creating repository {cwd_name}...", fg="blue")
+            user.create_repo(
+                name=cwd_name, description=desc, private=private,
+            )
+            url = user.get_repo(cwd_name).clone_url
 
-        repo = git.Repo.init(path=cwd)
-        remote = repo.create_remote(name="origin", url=url)
+            repo = git.Repo.init(path=cwd)
+            remote = repo.create_remote(name="origin", url=url)
 
         # Add and commit files
         files = [f for f in listdir(".") if path.isfile(f)]
@@ -80,7 +83,8 @@ def here(username, password):
         repo.index.commit(message=commit_msg)
 
         # push changes to github server
-        remote.push(refspec="master:master")
+        with spinner():
+            remote.push(refspec="master:master")
         click.secho(
             f"{BOLD_TEXT}Respo {cwd_name} successfully created locally! 🔥️🔥️",
             fg="green",

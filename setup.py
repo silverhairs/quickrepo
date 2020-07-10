@@ -21,6 +21,7 @@ setup(
     py_modules=["quickrepo"],
     install_requires=[
         "click==7.1.2",
+        "click-spinner==0.1.10",
         "PyGithub==1.51",
         "GitPython==3.1.3",
         "colorama==0.4.3",
