@@ -4,12 +4,13 @@ import git
 from os import getcwd, listdir, path
 from click_spinner import spinner
 from github import Github
+from version import upgrade_alert
 
 BOLD_TEXT = "\033[1m"
 
 
 @click.group()
-@click.version_option(version="1.0.3")
+@click.version_option(version="1.0.4")
 def main():
     """A CLI tool to initialize a repository both locally and on GitHub"""
 
@@ -41,6 +42,9 @@ def new(username, password, name):
 
     except Exception as e:
         click.secho(f"{repr(e)}", fg="red")
+    if upgrade_alert():
+        click.secho(f'{BOLD_TEXT}\n\n||{upgrade_alert()}||', fg='yellow')
+
 
 
 @main.command()
@@ -83,8 +87,8 @@ def here(username, password):
         repo.index.commit(message=commit_msg)
 
         # push changes to github server
-        with spinner():
-            remote.push(refspec="master:master")
+
+        remote.push(refspec="master:master")
         click.secho(
             f"{BOLD_TEXT}Repository named {cwd_name} successfully created locally! 🔥️🔥️",
             fg="green",
@@ -92,4 +96,6 @@ def here(username, password):
 
     except Exception as e:
         click.secho(f"{BOLD_TEXT}{repr(e)}", bg="red")
+    if upgrade_alert():
+        click.secho(f'{BOLD_TEXT}\n\n||{upgrade_alert()}||', fg='yellow')
 
