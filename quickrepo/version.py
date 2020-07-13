@@ -1,7 +1,7 @@
 import urllib.request
 import json
 
-current = "1.0.4"
+current = "1.0.5"
 
 response = urllib.request.urlopen(
     "http://pypi.python.org/pypi/quickrepo/json?callback=?"

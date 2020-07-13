@@ -12,7 +12,7 @@ BOLD_TEXT = "\033[1m"
 
 
 @click.group()
-@click.version_option(version="1.0.4")
+@click.version_option(version="1.0.5")
 def main():
     """A CLI tool to initialize a repository both locally and on GitHub"""
 
