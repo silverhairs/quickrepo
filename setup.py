@@ -8,7 +8,7 @@ with open(os.path.join(current, "README.md"), "r") as f:
 
 setup(
     name="quickrepo",
-    version="1.0.4",
+    version="1.0.5",
     url="https://www.github.com/silverhairs/quickrepo",
     author="Boris Kayi",
     author_email="boriskayienzo@gmail.com",

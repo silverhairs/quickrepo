@@ -7,7 +7,7 @@
 It is quite boring everytime typing `git init` in your local computer then go to github and initialize a new repository, take the remote url and add it to the local... I am already tired just by explaining. Thanks God **quickrepo** exists. <br/>
 <br/>quickrepo is a command-line application that automates initializing a new repository both locally and on GitHub. The user can either initialize the repository in the directory they are currently working in, or generate a brand new folder which will come initialized as a git and github repository.
 
-<img src="/demo.gif" alt="demo">
+<img src="https://github.com/silverhairs/quickrepo/blob/master/demo.gif" alt="demo">
 
 ## Requirements
   - Python 3.6+
