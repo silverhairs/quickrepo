@@ -2,10 +2,12 @@
 import click
 import git
 from os import getcwd, listdir, path
-from click_spinner import spinner
 from github import Github
-from version import upgrade_alert
+from click_spinner import spinner
+from getpass import getpass
+from .version import upgrade_alert
 
+here = path.dirname(path.abspath(__file__))
 BOLD_TEXT = "\033[1m"
 
 
