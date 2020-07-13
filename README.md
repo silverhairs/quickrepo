@@ -1,5 +1,6 @@
 # quickrepo
 ![fury](https://badge.fury.io/py/quickrepo.svg)
+![travis](https://travis-ci.org/silverhairs/quickrepo.svg?branch=master)
 ![pipy](https://pypip.in/d/quickrepo/badge.png)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
